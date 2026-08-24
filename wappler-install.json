@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "great-range-picker",
+  "name": "Great Range Picker",
+  "version": "1.0.0",
+  "cloneDir": "greatRangePicker",
+  "hasServerConnect": false,
+  "hasAppConnect": true,
+  "readme": "https://github.com/MrCheeseGit/greatRangePicker#installation",
+  "appConnect": {
+    "directories": [
+      "extensions/app_connect/components",
+      "public/js",
+      "public/css"
+    ],
+    "copy": [
+      {
+        "src": "app_connect/components.hjson",
+        "dest": "extensions/app_connect/components/great_range_picker_components.hjson"
+      },
+      {
+        "src": "includes/dmx-great-range-picker.js",
+        "dest": "public/js/dmx-great-range-picker.js"
+      },
+      {
+        "src": "includes/dmx-great-range-picker.css",
+        "dest": "public/css/dmx-great-range-picker.css"
+      }
+    ],
+    "notes": [
+      "Requires Font Awesome (chevron icons) or swap icons in a future release.",
+      "npm: Project Settings → Extensions, npm install, Project Updater, then quit Wappler completely and reopen.",
+      "Quit Wappler completely and reopen after Git copy."
+    ]
+  }
+}

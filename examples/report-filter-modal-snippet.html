@@ -1,0 +1,25 @@
+<!-- Example: report filter row inside a Bootstrap modal -->
+<div class="modal-body">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Date range</label>
+      <dmx-great-range-picker
+        id="reportRange"
+        default-preset="last30"
+        color-scheme="dark"
+        timezone="Europe/Lisbon"
+        locale="en-GB"
+        placement="modal"
+      ></dmx-great-range-picker>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-primary"
+    dmx-on:click="scRunReport.load({ dateFrom: reportRange.data.dateFrom, dateTo: reportRange.data.dateTo })"
+  >
+    Run report
+  </button>
+</div>

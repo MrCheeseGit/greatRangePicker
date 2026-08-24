@@ -1,0 +1,212 @@
+{
+  "components": [
+    {
+      "type": "dmx-great-range-picker",
+      "selector": "dmx-great-range-picker, [is=dmx-great-range-picker]",
+      "framework": "bootstrap5",
+      "groupTitle": "Mr Cheese",
+      "groupIcon": "fas fa-lg fa-cheese comp-exec",
+      "title": "Great Range Picker: @@id@@",
+      "icon": "fas fa-lg fa-calendar-alt comp-data",
+      "state": "opened",
+      "anyParent": true,
+      "template": "<dmx-great-range-picker id=\"@@id@@\" default-preset=\"next30\" timezone=\"UTC\" locale=\"en-GB\" color-scheme=\"dark\" placement=\"modal\" design-label=\"Great Range Picker\"><div class=\"gr-date-range--design gr-date-range--dark\" data-gr-host>Great Range Picker</div></dmx-great-range-picker>",
+      "baseName": "greatRange",
+      "help": "Date range picker with preset sidebar (Today, Last 30 days, Next 30 days, etc.), dual calendar, and popover portaled to document.body. Inside a Bootstrap modal, the popover centres on the dialog. Bind {{greatRange.data.dateFrom}} / {{greatRange.data.dateTo}} or wire dmx-on:changed.",
+      "properties": [
+        {
+          "group": "Great Range Picker",
+          "variables": [
+            {
+              "name": "compId",
+              "optionName": "id",
+              "attribute": "id",
+              "title": "ID",
+              "type": "text",
+              "required": true,
+              "defaultValue": ""
+            },
+            {
+              "name": "defaultPreset",
+              "optionName": "defaultPreset",
+              "attribute": "default-preset",
+              "title": "Default date range",
+              "type": "droplist",
+              "defaultValue": "next30",
+              "help": "Initial range when the page loads. Leave Start/End date empty to use this preset; explicit dates override it.",
+              "values": [
+                { "title": "Today", "value": "today" },
+                { "title": "Yesterday", "value": "yesterday" },
+                { "title": "Last 7 days", "value": "last7" },
+                { "title": "Last 28 days", "value": "last28" },
+                { "title": "Last 30 days", "value": "last30" },
+                { "title": "This month", "value": "thisMonth" },
+                { "title": "Last month", "value": "lastMonth" },
+                { "title": "Next 7 days", "value": "next7" },
+                { "title": "Next 30 days", "value": "next30" },
+                { "title": "Next 90 days", "value": "next90" },
+                { "title": "Year to date", "value": "ytd" },
+                { "title": "Last year", "value": "lastYear" },
+                { "title": "Custom (use date fields)", "value": "custom" }
+              ]
+            },
+            {
+              "name": "dateFrom",
+              "optionName": "dateFrom",
+              "attribute": "date-from",
+              "title": "Start date (YYYY-MM-DD)",
+              "type": "text",
+              "defaultValue": "",
+              "dataBindings": true
+            },
+            {
+              "name": "dateTo",
+              "optionName": "dateTo",
+              "attribute": "date-to",
+              "title": "End date (YYYY-MM-DD)",
+              "type": "text",
+              "defaultValue": "",
+              "dataBindings": true
+            },
+            {
+              "name": "timezone",
+              "optionName": "timezone",
+              "attribute": "timezone",
+              "title": "IANA timezone",
+              "type": "text",
+              "defaultValue": "UTC",
+              "help": "Used for Today and preset boundaries (e.g. Europe/Lisbon)."
+            },
+            {
+              "name": "locale",
+              "optionName": "locale",
+              "attribute": "locale",
+              "title": "Locale",
+              "type": "text",
+              "defaultValue": "en-GB",
+              "help": "Intl date formatting for month titles and trigger summary."
+            },
+            {
+              "name": "colorScheme",
+              "optionName": "colorScheme",
+              "attribute": "color-scheme",
+              "title": "Color scheme",
+              "type": "droplist",
+              "defaultValue": "dark",
+              "help": "Dark or light fixed theme; auto follows the visitor's system preference.",
+              "values": [
+                { "title": "Dark", "value": "dark" },
+                { "title": "Light", "value": "light" },
+                { "title": "Auto (system)", "value": "auto" }
+              ]
+            },
+            {
+              "name": "placement",
+              "optionName": "placement",
+              "attribute": "placement",
+              "title": "Popover placement",
+              "type": "droplist",
+              "defaultValue": "modal",
+              "help": "Modal: centre inside nearest modal dialog when found. Trigger: anchor below the trigger button.",
+              "values": [
+                { "title": "Modal (centred in dialog)", "value": "modal" },
+                { "title": "Trigger (below button)", "value": "trigger" }
+              ]
+            },
+            {
+              "name": "modalSelector",
+              "optionName": "modalSelector",
+              "attribute": "modal-selector",
+              "title": "Modal selector",
+              "type": "text",
+              "defaultValue": ".modal.show,.modal",
+              "help": "Comma-separated closest() selectors for modal centre mode."
+            },
+            {
+              "name": "startDateLabel",
+              "optionName": "startDateLabel",
+              "attribute": "start-date-label",
+              "title": "Start date label",
+              "type": "text",
+              "defaultValue": "Start date",
+              "dataBindings": true
+            },
+            {
+              "name": "endDateLabel",
+              "optionName": "endDateLabel",
+              "attribute": "end-date-label",
+              "title": "End date label",
+              "type": "text",
+              "defaultValue": "End date",
+              "dataBindings": true
+            },
+            {
+              "name": "cancelLabel",
+              "optionName": "cancelLabel",
+              "attribute": "cancel-label",
+              "title": "Cancel label",
+              "type": "text",
+              "defaultValue": "Cancel",
+              "dataBindings": true
+            },
+            {
+              "name": "applyLabel",
+              "optionName": "applyLabel",
+              "attribute": "apply-label",
+              "title": "Apply label",
+              "type": "text",
+              "defaultValue": "Apply",
+              "dataBindings": true
+            },
+            {
+              "name": "designLabel",
+              "optionName": "designLabel",
+              "attribute": "design-label",
+              "title": "Design canvas label",
+              "type": "text",
+              "defaultValue": "Great Range Picker"
+            }
+          ]
+        }
+      ],
+      "children": [],
+      "allowed_children": {},
+      "copyFiles": [
+        {
+          "src": "includes/dmx-great-range-picker.js",
+          "dst": "js/dmx-great-range-picker.js"
+        },
+        {
+          "src": "includes/dmx-great-range-picker.css",
+          "dst": "css/dmx-great-range-picker.css"
+        }
+      ],
+      "linkFiles": [
+        {
+          "src": "css/dmx-great-range-picker.css",
+          "type": "css"
+        },
+        {
+          "src": "js/dmx-great-range-picker.js",
+          "type": "js",
+          "defer": true
+        }
+      ],
+      "cssOrder": [
+        "dmx-great-range-picker.css"
+      ],
+      "jsOrder": [
+        "dmx-great-range-picker.js"
+      ],
+      "events": [
+        {
+          "name": "changed",
+          "title": "Range changed",
+          "description": "Fires when the user applies a new range. Detail: dateFrom, dateTo, preset."
+        }
+      ]
+    }
+  ],
+  "attributes": [],
+  "events": []
+}
