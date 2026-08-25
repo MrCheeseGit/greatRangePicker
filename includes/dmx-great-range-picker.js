@@ -46,6 +46,8 @@
     preset_next90: 'Next 90 days',
     preset_ytd: 'Year to date',
     preset_lastYear: 'Last year',
+    rangeBlocked: 'Start or end date is unavailable.',
+    rangeSpansBlocked: 'The selected range includes unavailable days.',
   };
 
   function mergeLabels(options) {
@@ -89,6 +91,75 @@
     } catch (e) {
       return date.toLocaleString('en-GB', opts || {});
     }
+  }
+
+  var DISPLAY_FORMAT_LOCALE = 'locale';
+
+  function normalizeDisplayFormat(value) {
+    var fmt = String(value || DISPLAY_FORMAT_LOCALE).trim();
+    if (!fmt || fmt === DISPLAY_FORMAT_LOCALE) return DISPLAY_FORMAT_LOCALE;
+    return fmt;
+  }
+
+  function formatYmdPattern(ymd, pattern) {
+    var d = ymdToDate(ymd);
+    if (!d) return ymd || '';
+    var DD = pad(d.getDate());
+    var MM = pad(d.getMonth() + 1);
+    var YYYY = String(d.getFullYear());
+    return String(pattern)
+      .replace(/YYYY/g, YYYY)
+      .replace(/DD/g, DD)
+      .replace(/MM/g, MM);
+  }
+
+  function normalizeYmdToken(item) {
+    if (item == null) return '';
+    var s = String(item).trim().slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : '';
+  }
+
+  function parseYmdList(value) {
+    if (value == null || value === '') return [];
+    if (Array.isArray(value)) {
+      return value.map(normalizeYmdToken).filter(Boolean);
+    }
+    var s = String(value).trim();
+    if (!s || isPlaceholder(s)) return [];
+    if (s.charAt(0) === '[') {
+      try {
+        var parsed = JSON.parse(s);
+        if (Array.isArray(parsed)) {
+          return parsed.map(normalizeYmdToken).filter(Boolean);
+        }
+      } catch (e) {
+        // fall through to delimiter split
+      }
+    }
+    return s.split(/[,;\s]+/).map(function (part) {
+      return normalizeYmdToken(part);
+    }).filter(Boolean);
+  }
+
+  function buildBlockedSet(value) {
+    return new Set(parseYmdList(value));
+  }
+
+  function isBlockedYmd(ymd, blockedSet) {
+    return !!(blockedSet && blockedSet.has(ymd));
+  }
+
+  function rangeIncludesBlocked(from, to, blockedSet) {
+    if (!from || !to || !blockedSet || !blockedSet.size) return false;
+    var cur = from;
+    var guard = 0;
+    while (compareYmd(cur, to) <= 0 && guard < 4000) {
+      if (blockedSet.has(cur)) return true;
+      if (cur === to) break;
+      cur = addDaysYmd(cur, 1);
+      guard += 1;
+    }
+    return false;
   }
 
   function todayYmd(tz) {
@@ -176,16 +247,20 @@
     return 'custom';
   }
 
-  function formatDisplayYmd(ymd, locale) {
+  function formatDisplayYmd(ymd, locale, displayFormat) {
     var d = ymdToDate(ymd);
     if (!d) return ymd || '';
+    var fmt = normalizeDisplayFormat(displayFormat);
+    if (fmt !== DISPLAY_FORMAT_LOCALE) {
+      return formatYmdPattern(ymd, fmt);
+    }
     return formatLocaleDate(d, { day: 'numeric', month: 'short', year: 'numeric' }, locale);
   }
 
-  function formatRangeSummary(from, to, locale) {
+  function formatRangeSummary(from, to, locale, displayFormat) {
     if (!from && !to) return '';
-    if (from === to) return formatDisplayYmd(from, locale);
-    return formatDisplayYmd(from, locale) + ' – ' + formatDisplayYmd(to, locale);
+    if (from === to) return formatDisplayYmd(from, locale, displayFormat);
+    return formatDisplayYmd(from, locale, displayFormat) + ' – ' + formatDisplayYmd(to, locale, displayFormat);
   }
 
   function compareYmd(a, b) {
@@ -237,7 +312,9 @@
 
     var tz = options.timezone || DEFAULT_TZ;
     var locale = options.locale || 'en-GB';
+    var displayFormat = normalizeDisplayFormat(options.displayFormat);
     var colorScheme = normalizeColorScheme(options.colorScheme);
+    var blockedSet = buildBlockedSet(options.blockedDates);
     var labelMap = mergeLabels(options);
     var str = makeStrFn(labelMap);
 
@@ -284,6 +361,7 @@
               '</div>' +
             '</div>' +
             '<div class="gr-date-range__calendars"></div>' +
+            '<p class="gr-date-range__range-error" role="alert" hidden></p>' +
             '<div class="gr-date-range__foot">' +
               '<button type="button" class="btn btn-link btn-sm gr-date-range__cancel"></button>' +
               '<button type="button" class="btn btn-primary btn-sm gr-date-range__apply"></button>' +
@@ -309,11 +387,34 @@
     var hiddenTo = root.querySelector('.gr-date-range__hidden-to');
     var cancelBtn = root.querySelector('.gr-date-range__cancel');
     var applyBtn = root.querySelector('.gr-date-range__apply');
+    var rangeErrorEl = root.querySelector('.gr-date-range__range-error');
 
     root.querySelector('.gr-date-range__from-label').textContent = str('startDate', 'Start date');
     root.querySelector('.gr-date-range__to-label').textContent = str('endDate', 'End date');
     cancelBtn.textContent = str('cancel', 'Cancel');
     applyBtn.textContent = str('apply', 'Apply');
+
+    function syncRangeError(message) {
+      if (!rangeErrorEl) return;
+      if (message) {
+        rangeErrorEl.textContent = message;
+        rangeErrorEl.hidden = false;
+      } else {
+        rangeErrorEl.textContent = '';
+        rangeErrorEl.hidden = true;
+      }
+    }
+
+    function validateDraftRange() {
+      if (!draft.from || !draft.to) return '';
+      if (isBlockedYmd(draft.from, blockedSet) || isBlockedYmd(draft.to, blockedSet)) {
+        return str('rangeBlocked', 'Start or end date is unavailable.');
+      }
+      if (rangeIncludesBlocked(draft.from, draft.to, blockedSet)) {
+        return str('rangeSpansBlocked', 'The selected range includes unavailable days.');
+      }
+      return '';
+    }
 
     function presetLabel(id) {
       return str('preset_' + id, id);
@@ -346,6 +447,7 @@
     function dayClasses(ymd, inMonth) {
       var cls = ['gr-date-range__day'];
       if (!inMonth) cls.push('gr-date-range__day--outside');
+      if (isBlockedYmd(ymd, blockedSet)) cls.push('gr-date-range__day--blocked');
       if (draft.from && draft.to) {
         var cmpFrom = compareYmd(ymd, draft.from);
         var cmpTo = compareYmd(ymd, draft.to);
@@ -376,7 +478,9 @@
         return week.map(function (day) {
           var ymd = dateToYmd(day);
           var inMonth = day.getMonth() === monthDate.getMonth();
+          var blocked = isBlockedYmd(ymd, blockedSet);
           return '<button type="button" class="' + dayClasses(ymd, inMonth) + '" data-ymd="' + escapeHtml(ymd) + '"' +
+            (blocked ? ' disabled' : '') +
             (inMonth ? '' : ' tabindex="-1"') + '>' + day.getDate() + '</button>';
         }).join('');
       }).join('');
@@ -409,7 +513,7 @@
     function syncTrigger() {
       var preset = detectPreset(committed.from, committed.to);
       root.querySelector('.gr-date-range__trigger-label').textContent = presetLabel(preset);
-      root.querySelector('.gr-date-range__trigger-dates').textContent = formatRangeSummary(committed.from, committed.to, locale);
+      root.querySelector('.gr-date-range__trigger-dates').textContent = formatRangeSummary(committed.from, committed.to, locale, displayFormat);
     }
 
     function renderAll() {
@@ -436,6 +540,8 @@
     }
 
     function selectDay(ymd) {
+      if (isBlockedYmd(ymd, blockedSet)) return;
+      syncRangeError('');
       if (draft.from && draft.to && draft.from !== draft.to && !selectingEnd) {
         draft.from = ymd;
         draft.to = ymd;
@@ -524,6 +630,7 @@
       viewMonth = ymdToDate(draft.from) || new Date();
       selectingEnd = false;
       renderAll();
+      syncRangeError(validateDraftRange());
       open = true;
       root.classList.add('is-open');
       trigger.setAttribute('aria-expanded', 'true');
@@ -612,6 +719,7 @@
       draft = normalizeRange(draft.from, draft.to);
       draftPreset = detectPreset(draft.from, draft.to);
       viewMonth = ymdToDate(draft.from) || viewMonth;
+      syncRangeError(validateDraftRange());
       renderAll();
     });
 
@@ -620,6 +728,7 @@
       if (!draft.from) draft.from = draft.to;
       draft = normalizeRange(draft.from, draft.to);
       draftPreset = detectPreset(draft.from, draft.to);
+      syncRangeError(validateDraftRange());
       renderAll();
     });
 
@@ -629,6 +738,11 @@
 
     applyBtn.addEventListener('click', function () {
       if (!draft.from || !draft.to) return;
+      var err = validateDraftRange();
+      if (err) {
+        syncRangeError(err);
+        return;
+      }
       commit();
     });
 
@@ -648,6 +762,11 @@
         draftPreset = next.preset || detectPreset(committed.from, committed.to);
         renderAll();
       },
+      setBlockedDates: function (value) {
+        blockedSet = buildBlockedSet(value);
+        syncRangeError(validateDraftRange());
+        renderAll();
+      },
       destroy: function () {
         closePopover(true);
         detachPopoverFromRoot();
@@ -665,6 +784,7 @@
     detectPreset: detectPreset,
     todayYmd: todayYmd,
     addDaysYmd: addDaysYmd,
+    parseYmdList: parseYmdList,
     DEFAULT_PRESET_IDS: DEFAULT_PRESET_IDS,
   };
 
@@ -700,6 +820,12 @@
     return propString(node.getAttribute(attr), fallback);
   }
 
+  function readBlockedDates(node, componentValue) {
+    if (Array.isArray(componentValue)) return componentValue;
+    if (componentValue != null && componentValue !== '') return componentValue;
+    return readAttr(node, 'blocked-dates', '');
+  }
+
   function presetFromDefault(value) {
     var id = propString(value, 'next30');
     if (DEFAULT_PRESET_IDS.indexOf(id) === -1) return 'next30';
@@ -731,6 +857,8 @@
         applyLabel: { type: String, default: 'Apply' },
         designLabel: { type: String, default: 'Great Range Picker' },
         colorScheme: { type: String, default: 'dark' },
+        displayFormat: { type: String, default: 'locale' },
+        blockedDates: { type: String, default: '' },
       },
 
       data: {
@@ -808,7 +936,9 @@
           preset: preset,
           timezone: tz,
           locale: propString(this.locale, 'en-GB'),
+          displayFormat: propString(readAttr(node, 'display-format', this.displayFormat), 'locale'),
           colorScheme: propString(readAttr(node, 'color-scheme', this.colorScheme), 'dark'),
+          blockedDates: readBlockedDates(node, this.blockedDates),
           placement: propString(this.placement, 'modal') === 'trigger' ? 'trigger' : 'modal',
           modalSelector: propString(this.modalSelector, '.modal.show,.modal'),
           modalDialogSelector: propString(this.modalDialogSelector, '.modal-dialog'),

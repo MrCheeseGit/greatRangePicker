@@ -1,6 +1,6 @@
 {
   "name": "wappler-great-range-picker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Wappler App Connect date range picker with presets, dual calendar, and modal-centred popover",
   "main": "includes/dmx-great-range-picker.js",
   "homepage": "https://www.mrcheese.co.uk",
@@ -23,6 +23,6 @@
   "license": "SEE LICENSE IN LICENSE",
   "wappler": {
     "module": "greatrange",
-    "version": "1.0.0"
+    "version": "1.1.0"
   }
 }

@@ -84,7 +84,33 @@
               "title": "Locale",
               "type": "text",
               "defaultValue": "en-GB",
-              "help": "Intl date formatting for month titles and trigger summary."
+              "help": "Intl formatting for month titles. Used for trigger dates when Display format is Locale default."
+            },
+            {
+              "name": "displayFormat",
+              "optionName": "displayFormat",
+              "attribute": "display-format",
+              "title": "Display format",
+              "type": "droplist",
+              "defaultValue": "locale",
+              "help": "How dates appear on the trigger button. Start/End fields stay as native browser date inputs (locale-controlled).",
+              "values": [
+                { "title": "Locale default (e.g. 24 Aug 2026)", "value": "locale" },
+                { "title": "DD/MM/YYYY", "value": "DD/MM/YYYY" },
+                { "title": "DD-MM-YYYY", "value": "DD-MM-YYYY" },
+                { "title": "MM/DD/YYYY", "value": "MM/DD/YYYY" },
+                { "title": "YYYY-MM-DD", "value": "YYYY-MM-DD" }
+              ]
+            },
+            {
+              "name": "blockedDates",
+              "optionName": "blockedDates",
+              "attribute": "blocked-dates",
+              "title": "Blocked dates",
+              "type": "text",
+              "defaultValue": "",
+              "dataBindings": true,
+              "help": "YYYY-MM-DD list: comma-separated or JSON array. Those days are disabled; Apply is blocked if the range includes an unavailable day. Bind event/booking dates from your query."
             },
             {
               "name": "colorScheme",

@@ -454,6 +454,30 @@
   cursor: default;
 }
 
+.gr-date-range__day--blocked {
+  opacity: 0.38;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.gr-date-range__day--blocked:hover:not(:disabled) {
+  background: transparent;
+}
+
+.gr-date-range__range-error {
+  margin: 0.65rem 0 0;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.35rem;
+  background: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.gr-date-range__range-error[hidden] {
+  display: none !important;
+}
+
 .gr-date-range__foot {
   display: flex;
   justify-content: flex-end;

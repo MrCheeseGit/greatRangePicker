@@ -4,7 +4,7 @@
 
 [![License: Mr Cheese Extension v1.0](https://img.shields.io/badge/License-Mr%20Cheese%20Extension%20v1.0-blue.svg)](https://www.mrcheese.co.uk/extension-license)
 ![Wappler](https://img.shields.io/badge/Wappler-App%20Connect-teal)
-![Version](https://img.shields.io/badge/version-1%2E0%2E0-green)
+![Version](https://img.shields.io/badge/version-1%2E1%2E0-green)
 
 Built by **[Mr Cheese](https://www.mrcheese.co.uk)** · Wappler extensions
 
@@ -17,6 +17,8 @@ Built by **[Mr Cheese](https://www.mrcheese.co.uk)** · Wappler extensions
 | **Presets** | Today, Last 7/28/30 days, Next 7/30/90 days, This month, Last month, Year to date, Last year, Custom |
 | **Default date range** | Wappler property (or `default-preset` attribute) sets the initial filter on page load |
 | **Color scheme** | `dark`, `light`, or `auto` (follows system `prefers-color-scheme`); light theme isolated on dark host pages |
+| **Display format** | Trigger dates as `DD/MM/YYYY`, `DD-MM-YYYY`, etc. (native Start/End inputs stay browser-controlled) |
+| **Blocked dates** | Bind unavailable days; disabled in the calendar; Apply blocked if the range spans a blocked day |
 | **Dual calendar** | Two months, range highlight, Escape to close |
 | **Modal-safe** | Popover moves to `document.body`; centres inside Bootstrap modal dialogs |
 | **Wappler-native** | `dmx-great-range-picker` with `data.dateFrom` / `data.dateTo` / `data.preset` bindings |
@@ -87,14 +89,20 @@ Set **Default date range** in the component panel (or `default-preset` on the ta
 
 Set **Color scheme** to `dark`, `light`, or `auto`.
 
+Set **Display format** for the trigger summary (e.g. `DD/MM/YYYY`). **Start date** / **End date** inside the popover remain native `<input type="date">` fields; their appearance follows the visitor's browser and locale, not this format.
+
+Bind **Blocked dates** when filtering bookings or events (comma-separated `YYYY-MM-DD` or a JSON array from your query). Those days cannot be selected; **Apply** is rejected if the chosen range includes an unavailable day.
+
 ```html
 <dmx-great-range-picker
   id="reportRange"
   default-preset="last30"
+  display-format="DD/MM/YYYY"
   color-scheme="dark"
   timezone="Europe/Lisbon"
   locale="en-GB"
   placement="modal"
+  dmx-bind:blocked-dates="bookedDays.data.dates"
   dmx-on:changed="runReport(reportRange.data.dateFrom, reportRange.data.dateTo)"
 ></dmx-great-range-picker>
 ```
@@ -108,6 +116,8 @@ Set **Color scheme** to `dark`, `light`, or `auto`.
 | Property | Attribute | Notes |
 |----------|-----------|--------|
 | Default date range | `default-preset` | Initial preset when Start/End date are empty |
+| Display format | `display-format` | Trigger only: `locale`, `DD/MM/YYYY`, `DD-MM-YYYY`, `MM/DD/YYYY`, `YYYY-MM-DD` |
+| Blocked dates | `blocked-dates` | Unavailable `YYYY-MM-DD` values (comma-separated or JSON array) |
 | Color scheme | `color-scheme` | `dark`, `light`, or `auto` |
 | Timezone | `timezone` | IANA zone for Today and preset boundaries (e.g. `Europe/Lisbon`) |
 | Locale | `locale` | Intl formatting for trigger and month titles |
@@ -120,15 +130,34 @@ See [examples/report-filter-modal-snippet.html](examples/report-filter-modal-sni
 ```javascript
 var picker = window.GREAT_RANGE_PICKER.mount(document.getElementById('range-host'), {
   preset: 'next30',
+  displayFormat: 'DD/MM/YYYY',
+  blockedDates: ['2026-12-25', '2026-12-26'],
   colorScheme: 'light',
   timezone: 'Europe/Lisbon',
   locale: 'en-GB',
   onChange: function (v) { console.log(v.dateFrom, v.dateTo, v.preset); }
 });
+// picker.setBlockedDates(updatedArray) when your query reloads
 // picker.destroy() when removing the host (e.g. modal close)
 ```
 
 Pass `preset` or `defaultPreset` when `dateFrom` / `dateTo` are omitted to seed the initial range.
+
+### Display format (trigger only)
+
+**Display format** controls the text on the trigger button (and the formatted summary in `formatRangeSummary`). Values are always stored and emitted as **`YYYY-MM-DD`** for Server Connect and bindings.
+
+The **Start date** / **End date** fields in the popover are native date inputs. Browsers format those controls using locale; the extension does not override them. Use **Locale** plus **Display format → Locale default** if you want Intl-style trigger text (e.g. `24 Aug 2026`).
+
+### Blocked dates (bookings / events)
+
+Use **Blocked dates** for simple availability: pass dates that already have an event or booking. Typical pattern:
+
+1. Server Connect query returns distinct booked dates for one property (or filtered set).
+2. Bind `dmx-bind:blocked-dates="{{query.data.dates}}"` (array of `YYYY-MM-DD` strings) or a comma-separated string.
+3. When the user changes filters, the binding updates and the calendar re-renders.
+
+**Validation (v1.1):** blocked days are not clickable. **Apply** fails with an inline message if the range would include a blocked day between start and end. This extension does not enforce minimum stay, check-in/out weekdays, or cross-property rules; keep that logic in your API if needed.
 
 ---
 

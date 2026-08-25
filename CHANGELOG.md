@@ -1,13 +1,9 @@
 # Changelog
 
-## 1.0.0
+## 1.1.0
 
-Initial release of **Great Range Picker** (App Connect).
-
-- Preset sidebar and dual calendar with body-portaled popover (modal-centred or trigger placement).
-- **Default date range** property (`default-preset`): Today, Last/Next 30 days, YTD, and more.
-- **Color scheme**: `dark`, `light`, or `auto`; light theme isolates from dark Bootstrap / portal host pages.
-- Wappler bindings: `data.dateFrom`, `data.dateTo`, `data.preset`; imperative `window.GREAT_RANGE_PICKER.mount()`.
+- **Display format** on the trigger (`DD/MM/YYYY`, `DD-MM-YYYY`, `MM/DD/YYYY`, `YYYY-MM-DD`, or locale default). Native Start/End date inputs unchanged.
+- **Blocked dates** property: bind unavailable days (comma-separated or JSON array). Disabled in the calendar; Apply validates the range does not include blocked days.
 
 See [README](README.md) for installation and usage.
 
