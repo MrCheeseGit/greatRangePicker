@@ -1,10 +1,9 @@
 # Changelog
 
-## 1.1.0
+## 1.2.0
 
-- **Display format** on the trigger (`DD/MM/YYYY`, `DD-MM-YYYY`, `MM/DD/YYYY`, `YYYY-MM-DD`, or locale default). Native Start/End date inputs unchanged.
-- **Blocked dates** property: bind unavailable days (comma-separated or JSON array). Disabled in the calendar; Apply validates the range does not include blocked days.
+**Timezone** and **Locale** are bindable in the Wappler property panel and via `dmx-bind:timezone` / `dmx-bind:locale`. Bind IANA zones from your database (e.g. `Australia/Melbourne`, `Australia/Perth`); invalid values fall back safely. The picker refreshes when bound values change.
 
-See [README](README.md) for installation and usage.
+See [README](README.md) for features, installation, and usage.
 
-Licensed under [Mr Cheese Extension License v1.0](https://www.mrcheese.co.uk/extension-license).
+Licensed under [Mr Cheese Extension License v1.0](https://www.mrcheese.co.uk/extension-license). Earlier MIT releases, if any, remain under MIT at their historical version tags.

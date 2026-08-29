@@ -75,7 +75,8 @@
               "title": "IANA timezone",
               "type": "text",
               "defaultValue": "UTC",
-              "help": "Used for Today and preset boundaries (e.g. Europe/Lisbon)."
+              "dataBindings": true,
+              "help": "Used for Today and preset boundaries. Bind an IANA zone from your database (e.g. Australia/Melbourne, Australia/Perth) or use dmx-bind:timezone."
             },
             {
               "name": "locale",
@@ -84,7 +85,8 @@
               "title": "Locale",
               "type": "text",
               "defaultValue": "en-GB",
-              "help": "Intl formatting for month titles. Used for trigger dates when Display format is Locale default."
+              "dataBindings": true,
+              "help": "Intl formatting for month titles and trigger dates when Display format is Locale default. Bind dynamically (e.g. en-AU) or use dmx-bind:locale."
             },
             {
               "name": "displayFormat",

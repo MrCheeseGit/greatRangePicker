@@ -4,7 +4,7 @@
 
 [![License: Mr Cheese Extension v1.0](https://img.shields.io/badge/License-Mr%20Cheese%20Extension%20v1.0-blue.svg)](https://www.mrcheese.co.uk/extension-license)
 ![Wappler](https://img.shields.io/badge/Wappler-App%20Connect-teal)
-![Version](https://img.shields.io/badge/version-1%2E1%2E0-green)
+![Version](https://img.shields.io/badge/version-1%2E2%2E0-green)
 
 Built by **[Mr Cheese](https://www.mrcheese.co.uk)** · Wappler extensions
 
@@ -93,19 +93,23 @@ Set **Display format** for the trigger summary (e.g. `DD/MM/YYYY`). **Start date
 
 Bind **Blocked dates** when filtering bookings or events (comma-separated `YYYY-MM-DD` or a JSON array from your query). Those days cannot be selected; **Apply** is rejected if the chosen range includes an unavailable day.
 
+Bind **Timezone** and **Locale** from your database or session (property panel data binding, or `dmx-bind` on the tag). Use IANA zones such as `Australia/Melbourne` or `Australia/Perth` for preset boundaries and Today. When the bound value changes, the picker refreshes automatically.
+
 ```html
 <dmx-great-range-picker
   id="reportRange"
   default-preset="last30"
   display-format="DD/MM/YYYY"
   color-scheme="dark"
-  timezone="Europe/Lisbon"
-  locale="en-GB"
+  dmx-bind:timezone="userProfile.data.timezone"
+  dmx-bind:locale="userProfile.data.locale"
   placement="modal"
   dmx-bind:blocked-dates="bookedDays.data.dates"
   dmx-on:changed="runReport(reportRange.data.dateFrom, reportRange.data.dateTo)"
 ></dmx-great-range-picker>
 ```
+
+Static values still work: `timezone="Australia/Melbourne"` and `locale="en-AU"`.
 
 **Data bindings:** `{{reportRange.data.dateFrom}}`, `{{reportRange.data.dateTo}}`, `{{reportRange.data.preset}}`
 
@@ -119,8 +123,8 @@ Bind **Blocked dates** when filtering bookings or events (comma-separated `YYYY-
 | Display format | `display-format` | Trigger only: `locale`, `DD/MM/YYYY`, `DD-MM-YYYY`, `MM/DD/YYYY`, `YYYY-MM-DD` |
 | Blocked dates | `blocked-dates` | Unavailable `YYYY-MM-DD` values (comma-separated or JSON array) |
 | Color scheme | `color-scheme` | `dark`, `light`, or `auto` |
-| Timezone | `timezone` | IANA zone for Today and preset boundaries (e.g. `Europe/Lisbon`) |
-| Locale | `locale` | Intl formatting for trigger and month titles |
+| Timezone | `timezone` | IANA zone for Today and preset boundaries. **Bindable** (e.g. `Australia/Melbourne`) |
+| Locale | `locale` | Intl formatting for trigger and month titles. **Bindable** (e.g. `en-AU`) |
 | Popover placement | `placement` | `modal` (centre in dialog) or `trigger` (below button) |
 
 See [examples/report-filter-modal-snippet.html](examples/report-filter-modal-snippet.html) for a modal filter row.
