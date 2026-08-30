@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.2.0
+## 1.2.1
 
-**Timezone** and **Locale** are bindable in the Wappler property panel and via `dmx-bind:timezone` / `dmx-bind:locale`. Bind IANA zones from your database (e.g. `Australia/Melbourne`, `Australia/Perth`); invalid values fall back safely. The picker refreshes when bound values change.
+Updated `wappler-install.json` notes for ConnectBench `.cbext` installs, npm `file:` devDependency registration, and `.wappler/project.json` Elements picker troubleshooting.
 
 See [README](README.md) for features, installation, and usage.
 

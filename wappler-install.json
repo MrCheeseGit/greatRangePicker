@@ -2,7 +2,7 @@
   "schema": 1,
   "id": "great-range-picker",
   "name": "Great Range Picker",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "cloneDir": "greatRangePicker",
   "hasServerConnect": false,
   "hasAppConnect": true,
@@ -29,8 +29,11 @@
     ],
     "notes": [
       "Requires Font Awesome (chevron icons) or swap icons in a future release.",
-      "npm: Project Settings → Extensions, npm install, Project Updater, then quit Wappler completely and reopen.",
-      "Quit Wappler completely and reopen after Git copy."
+      "npm: add wappler-great-range-picker to package.json devDependencies (file:../Server-Connect/Extensions/greatRangePicker) and run npm install.",
+      "Register wappler-great-range-picker in .wappler/project.json extensions if the Elements picker stays empty.",
+      "Wappler IDE reads components.hjson from node_modules — manifest copy alone does not show Mr Cheese in Elements.",
+      "ConnectBench .cbext installs perform manifest copy + npm registration automatically.",
+      "Quit Wappler completely (including tray) and reopen after install."
     ]
   }
 }
