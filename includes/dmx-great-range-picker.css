@@ -251,6 +251,9 @@
   position: fixed;
   z-index: 12050;
   width: min(52rem, calc(100vw - 2rem));
+  max-height: min(52rem, calc(100dvh - 2rem));
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--gr-popover-border);
   border-radius: 0.85rem;
   background: var(--gr-panel-bg);
@@ -276,6 +279,9 @@
   display: grid;
   grid-template-columns: 13.25rem minmax(0, 1fr);
   align-items: stretch;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .gr-date-range__presets {
@@ -316,7 +322,11 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
   padding: 0.95rem 1rem 0.85rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gr-date-range__inputs {
@@ -492,6 +502,11 @@
 }
 
 @media (max-width: 720px) {
+  .gr-date-range__popover {
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+
   .gr-date-range__layout {
     grid-template-columns: 1fr;
   }
@@ -499,13 +514,23 @@
   .gr-date-range__presets {
     flex-direction: row;
     flex-wrap: wrap;
-    max-height: none;
+    max-height: 6.75rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     border-right: 0;
     border-bottom: 1px solid var(--gr-divider);
   }
 
   .gr-date-range__calendars {
     grid-template-columns: 1fr;
+  }
+
+  .gr-date-range__foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    background: var(--gr-panel-bg);
   }
 }
 

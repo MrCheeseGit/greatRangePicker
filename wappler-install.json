@@ -2,7 +2,7 @@
   "schema": 1,
   "id": "great-range-picker",
   "name": "Great Range Picker",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "cloneDir": "greatRangePicker",
   "hasServerConnect": false,
   "hasAppConnect": true,

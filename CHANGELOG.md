@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.2.1
+## 1.2.2
 
-Updated `wappler-install.json` notes for ConnectBench `.cbext` installs, npm `file:` devDependency registration, and `.wappler/project.json` Elements picker troubleshooting.
+Fixes `dmx-on:changed` firing: uses Wappler `dispatchEvent` instead of non-existent `dispatch`. Improves mobile layout with viewport-capped popover height, internal scrolling, and sticky Apply/Cancel on narrow screens.
 
 See [README](README.md) for features, installation, and usage.
 
